@@ -1,0 +1,1 @@
+# powerbi-delegated-scope-graph-connector
