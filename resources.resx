@@ -147,4 +147,10 @@
   <data name="TenantLabel" xml:space="preserve">
     <value>Tenant ID</value>
   </data>
+   <data name="PageSizeLabel" xml:space="preserve">
+    <value>API Page Size</value>
+  </data>
+   <data name="PageSizeDescription" xml:space="preserve">
+    <value>Number of records to request in one API call</value>
+  </data>
 </root>
