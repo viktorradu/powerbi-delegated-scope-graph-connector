@@ -38,7 +38,7 @@ DelegatedScopeGraphConnectorType = type function(
 
 DelegatedScopeGraphConnectorImpl = (targetCloud as text, tenant as text, clientId as text, clientSecret as text, optional relativePath as text, optional pageSize as number) as table =>
     let
-        result = GetAllPagesByNextLink(GetEnvironmentValue(targetCloud, "resource") & relativePath, pageSize)
+        result = GetAllPagesByNextLink(GetEnvironmentValue(targetCloud, "resource") & (if relativePath = null then "" else relativePath), pageSize)
     in
         result;
 
@@ -64,7 +64,15 @@ GetPage = (url as text, optional pageSize as number) as table =>
         result meta [NextLink = nextLink];
 
 DelegatedScopeGraphConnector = [
-    TestConnection = (dataSourcePath) => { "DelegatedScopeGraphConnector.Contents", dataSourcePath },
+    TestConnection = (dataSourcePath) => 
+        let
+            json = Json.Document(dataSourcePath),
+            targetCloud = json[targetCloud],
+            tenant = json[tenant],
+            clientId = json[clientId],
+            clientSecret = json[clientSecret]
+        in
+            { "DelegatedScopeGraphConnector.Contents", targetCloud, tenant, clientId, clientSecret },
     Authentication = [
         OAuth = [
             StartLogin=StartLogin,
@@ -170,7 +178,7 @@ GetEnvironmentValue = (targetCloud as text, key as text) =>
             resource = "https://graph.microsoft.us/",
             auth_root = "https://login.microsoftonline.us/",
             token_uri = "https://login.microsoftonline.us/common/oauth2/token",
-            redirect_uri = "https://oauth.powerbigov.us/views/oauthredirect.html",
+            redirect_uri = "https://app.powerbigov.us/views/oauthredirect.html",
             logout_uri = "https://login.microsoftonline.us/logout.srf"],
 
         value = if targetCloud = "GCC High" then Record.Field(valuesGCCHigh, key) else Record.Field(valuesCommercial, key)
